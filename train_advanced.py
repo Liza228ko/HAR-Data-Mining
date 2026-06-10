@@ -64,13 +64,16 @@ print("\nTraining final Advanced Model on ALL data for Kaggle submission...")
 model = lgb.LGBMClassifier(**params)
 model.fit(X, y)
 
+print("Loading Kaggle test features...")
 test_df = pd.read_csv('data/test_features_advanced.csv')
-test_df = test_df.rename(columns=lambda x: re.sub('[^A-Za-z0-9_]+', '', x))
-X_kaggle = test_df.drop(columns=['file_id'])
 
-# Just in case a blank label column sneaked in
-if 'label' in X_kaggle.columns:
-    X_kaggle = X_kaggle.drop(columns=['label'])
+# Clean test columns identically to training features
+test_df = test_df.rename(columns=lambda x: re.sub('[^A-Za-z0-9_]+', '', x))
+
+# Ensure test features align exactly in order and identity with training features
+X_kaggle = test_df[X.columns]
+
+print(f"Test data loaded! Predictors shape: {X_kaggle.shape}")
 
 print("Making Kaggle predictions...")
 kaggle_preds = model.predict(X_kaggle)
@@ -82,3 +85,4 @@ submission = pd.DataFrame({
 
 submission.to_csv('data/submission_advanced.csv', index=False)
 print("\nSuccess! Saved to: data/submission_advanced.csv")
+
