@@ -8,7 +8,10 @@
 
   <!-- Blocks -->
   <rect x="10" y="70" width="120" height="60" class="box" rx="5"/>
-  <text x="70" y="105" class="text">Raw CSVs<br/>(300x6)</text>
+  <text x="70" y="95" class="text">
+    <tspan x="70" dy="0">Raw CSVs</tspan>
+    <tspan x="70" dy="18">(300x6)</tspan>
+  </text>
 
   <rect x="180" y="50" width="180" height="100" class="box" rx="5" style="fill: #e9ecef;"/>
   <text x="270" y="75" class="text" font-weight="bold">Feature Extraction</text>
@@ -16,10 +19,16 @@
   <text x="270" y="125" class="text">Freq-Domain (FFT)</text>
 
   <rect x="410" y="70" width="140" height="60" class="box" rx="5"/>
-  <text x="480" y="105" class="text">LightGBM Model<br/>(Balanced Weights)</text>
+  <text x="480" y="95" class="text">
+    <tspan x="480" dy="0">LightGBM Model</tspan>
+    <tspan x="480" dy="18">(Balanced Weights)</tspan>
+  </text>
 
   <rect x="600" y="70" width="160" height="60" class="box" rx="5" style="fill: #d4edda;"/>
-  <text x="680" y="105" class="text" font-weight="bold">Final Submission<br/>(Macro F1: 0.7779)</text>
+  <text x="680" y="95" class="text" font-weight="bold">
+    <tspan x="680" dy="0">Final Submission</tspan>
+    <tspan x="680" dy="18">(Macro F1: 0.7779)</tspan>
+  </text>
 
   <!-- Arrows -->
   <path d="M 130 100 L 170 100" class="arrow" marker-end="url(#arrowhead)"/>

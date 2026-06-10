@@ -47,5 +47,5 @@
   <text x="390" y="265" class="text" text-anchor="middle">L5</text>
   <text x="390" y="226" class="text" text-anchor="middle">4.8%</text>
 
-  <text x="250" y="290" class="text" text-anchor="middle" font-style="italic">L0 & L1 dominate the dataset, accounting for ~85% of samples.</text>
+  <text x="250" y="290" class="text" text-anchor="middle" font-style="italic">L0 &amp; L1 dominate the dataset, accounting for ~85% of samples.</text>
 </svg>
