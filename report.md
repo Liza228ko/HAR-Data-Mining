@@ -5,7 +5,7 @@
 
 ---
 
-## 1. How to Run
+## How to Run
 
 ### Directory Structure
 Ensure your repository is organized as follows:
@@ -66,7 +66,7 @@ python3 train_advanced.py
 
 ---
 
-## 2. Preliminary Analysis
+## Q1: Preliminary Analysis
 
 ### Dataset Overview & Structure
 When I first examined the dataset, I wanted to understand the volume and format of the signals we are working with. The task is to classify a 5-minute activity window (a single CSV file) into one of 6 activity labels (0 to 5). The raw accelerometer signals were originally sampled at a higher frequency and then aggregated into 1-second intervals. Each file has exactly 300 rows containing 3-axis accelerometer statistics (`mean_x`, `mean_y`, `mean_z`, `std_x`, `std_y`, `std_z`).
@@ -134,7 +134,7 @@ The dummy baseline gets only 0.0974 Macro F1 due to the class imbalance. A Light
 
 ---
 
-## 3. Preprocessing & Feature Engineering
+## Q2: Preprocessing & Gains
 Since raw time-series data cannot be fed directly into gradient boosted trees, my primary preprocessing step was feature extraction. I engineered a comprehensive multi-domain feature pipeline.
 
 ### Feature Extraction Details
@@ -164,7 +164,7 @@ I summarized all my preprocessing techniques and their individual gains in Table
 
 ---
 
-## 4. Sequential Alignment & Temporal Dependencies
+## Q3: Sequential Alignment & Temporal Dependencies
 Since the target labels are assigned to the entire 5-minute window rather than individual seconds, I had to align the sequence data to this single target. I accomplished this using the following alignment strategy:
 
 ### Alignment and Sequence Design
@@ -180,7 +180,7 @@ Since the target labels are assigned to the entire 5-minute window rather than i
 
 ---
 
-## 5. Ablation Study & Validation Strategy
+## Q4: Ablation Study & Validation Strategy
 To evaluate the impact of my design decisions, I performed a systematic ablation study.
 
 ### Core Feature Ablation (Group CV)
