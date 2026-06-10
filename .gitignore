@@ -1,0 +1,13 @@
+# Data Files
+data/train/
+data/test/
+data/*.csv
+!data/user_mapping_train.csv
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# System
+.DS_Store
