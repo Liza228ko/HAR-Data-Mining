@@ -37,31 +37,31 @@ pip install pandas numpy scikit-learn lightgbm tqdm joblib scipy
 
 ### Execution Steps
 1.  **Extract Features:** Run the feature extraction script to preprocess raw CSV logs:
-    ```bash
-    python3 data_processing.py
-    ```
+```bash
+python3 data_processing.py
+```
     This reads the raw files and creates `data/train_features_advanced.csv` and `data/test_features_advanced.csv`.
 2.  **Generate User Mapping:** Build the user-to-file mapping for GroupKFold validation:
-    ```bash
-    python3 create_user_mapping.py
-    ```
+```bash
+python3 create_user_mapping.py
+```
     This generates `data/user_mapping_train.csv`.
 3.  **Run Baseline Evaluations (Optional):** To reproduce the baseline comparison (Table 3):
-    ```bash
-    python3 baseline_simple.py
-    ```
+```bash
+python3 baseline_simple.py
+```
     To train and evaluate the original simple Random Forest baseline (Macro F1 = 0.7002 on Stratified KFold):
-    ```bash
-    python3 train_baseline.py
-    ```
+```bash
+python3 train_baseline.py
+```
     To reproduce the exact ablation study scores (Table 5):
-    ```bash
-    python3 ablation_study.py
-    ```
+```bash
+python3 ablation_study.py
+```
 4.  **Train Advanced Model & Predict:** Run the main advanced training script to evaluate the CV score and output predictions:
-    ```bash
-    python3 train_advanced.py
-    ```
+```bash
+python3 train_advanced.py
+```
     This trains the final model on all data and saves the predictions to `data/submission_advanced.csv`.
 
 ---
