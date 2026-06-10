@@ -67,7 +67,6 @@ python3 train_advanced.py
 ---
 
 ## 2. Preliminary Analysis
-![Class Distribution](class_distribution.svg)
 
 ### Dataset Overview & Structure
 When I first examined the dataset, I wanted to understand the volume and format of the signals we are working with. The task is to classify a 5-minute activity window (a single CSV file) into one of 6 activity labels (0 to 5). The raw accelerometer signals were originally sampled at a higher frequency and then aggregated into 1-second intervals. Each file has exactly 300 rows containing 3-axis accelerometer statistics (`mean_x`, `mean_y`, `mean_z`, `std_x`, `std_y`, `std_z`).
@@ -94,6 +93,8 @@ I summarized the key dataset statistics in Table 1 below:
 *   **User Variation:** The same activity looks very different depending on the user. Differences in height, stride, wrist angle, or which hand the watch is worn on cause significant variations in the raw signals. This means that a standard validation split will leak user characteristics and give us a fake sense of accuracy.
 
 ### Class Imbalance Analysis
+![Class Distribution](class_distribution.svg)
+
 I ran a value count on the training set labels and found a severe class imbalance. Labels 0 and 1 represent **84.7%** of the entire training dataset. The other four activities are rare minority classes, with Activity 4 making up only **1.29%** of the training files. 
 
 Since the actual activity names are anonymized as integers (0 to 5) in this competition, I analyzed the signal statistics of each class to form logical deductions about their physical natures. For instance, classes 0 and 1 exhibit very low signal variance (suggesting stationary postures like sitting/lying down or standing still), while classes 3 and 5 show higher periodicity and variance (suggesting rhythmic walking/gait or light active movements).
@@ -164,11 +165,10 @@ I summarized all my preprocessing techniques and their individual gains in Table
 ---
 
 ## 4. Sequential Alignment & Temporal Dependencies
-![System Architecture](architecture.svg)
-
 Since the target labels are assigned to the entire 5-minute window rather than individual seconds, I had to align the sequence data to this single target. I accomplished this using the following alignment strategy:
 
 ### Alignment and Sequence Design
+![System Architecture](architecture.svg)
 *   **Sub-windowing (The "S" Rule):** Users don't stay perfectly still or keep the same pace for a full 5 minutes. To model how their behavior changes over time, I divided the 300 seconds into three 100-second thirds:
     - **$w_1$ (0 to 100 seconds):** Represents the early phase.
     - **$w_2$ (100 to 200 seconds):** Represents the steady-state middle phase.
