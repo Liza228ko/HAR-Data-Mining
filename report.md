@@ -5,7 +5,68 @@
 
 ---
 
-## 1. Preliminary Analysis
+## 1. How to Run
+
+### Directory Structure
+Ensure your repository is organized as follows:
+```text
+/
+├── data_processing.py      (Preprocesses raw accelerometer CSVs into structured features)
+├── create_user_mapping.py  (Builds mapping of file IDs to user IDs for GroupKFold validation)
+├── train_advanced.py       (Main script to train the final LightGBM model and generate predictions)
+├── train_baseline.py       (Trains a simple Random Forest baseline on time-domain stats under random splits)
+├── baseline_simple.py      (Compares baseline classifier configurations under GroupKFold)
+├── ablation_study.py       (Runs the ablation experiments of feature groups under GroupKFold)
+├── report.md               (This report document)
+├── architecture.svg        (Visual diagram of sequence windowing and model pipeline)
+└── data/
+    ├── user_mapping_train.csv
+    ├── train/
+    │   └── train/
+    │       └── User_xxx/ (Raw CSVs)
+    └── test/
+        └── test/
+            └── User_xxx/ (Raw CSVs)
+```
+
+### Dependencies
+Install the required packages via pip:
+```bash
+pip install pandas numpy scikit-learn lightgbm tqdm joblib scipy
+```
+
+### Execution Steps
+1.  **Extract Features:** Run the feature extraction script to preprocess raw CSV logs:
+    ```bash
+    python3 data_processing.py
+    ```
+    This reads the raw files and creates `data/train_features_advanced.csv` and `data/test_features_advanced.csv`.
+2.  **Generate User Mapping:** Build the user-to-file mapping for GroupKFold validation:
+    ```bash
+    python3 create_user_mapping.py
+    ```
+    This generates `data/user_mapping_train.csv`.
+3.  **Run Baseline Evaluations (Optional):** To reproduce the baseline comparison (Table 3):
+    ```bash
+    python3 baseline_simple.py
+    ```
+    To train and evaluate the original simple Random Forest baseline (Macro F1 = 0.7002 on Stratified KFold):
+    ```bash
+    python3 train_baseline.py
+    ```
+    To reproduce the exact ablation study scores (Table 5):
+    ```bash
+    python3 ablation_study.py
+    ```
+4.  **Train Advanced Model & Predict:** Run the main advanced training script to evaluate the CV score and output predictions:
+    ```bash
+    python3 train_advanced.py
+    ```
+    This trains the final model on all data and saves the predictions to `data/submission_advanced.csv`.
+
+---
+
+## 2. Preliminary Analysis
 ![Class Distribution](class_distribution.svg)
 
 ### Dataset Overview & Structure
@@ -72,7 +133,7 @@ The dummy baseline gets only 0.0974 Macro F1 due to the class imbalance. A Light
 
 ---
 
-## 2. Preprocessing & Feature Engineering
+## 3. Preprocessing & Feature Engineering
 Since raw time-series data cannot be fed directly into gradient boosted trees, my primary preprocessing step was feature extraction. I engineered a comprehensive multi-domain feature pipeline.
 
 ### Feature Extraction Details
@@ -102,7 +163,7 @@ I summarized all my preprocessing techniques and their individual gains in Table
 
 ---
 
-## 3. Sequential Alignment & Temporal Dependencies
+## 4. Sequential Alignment & Temporal Dependencies
 ![System Architecture](architecture.svg)
 
 Since the target labels are assigned to the entire 5-minute window rather than individual seconds, I had to align the sequence data to this single target. I accomplished this using the following alignment strategy:
@@ -119,7 +180,7 @@ Since the target labels are assigned to the entire 5-minute window rather than i
 
 ---
 
-## 4. Ablation Study & Validation Strategy
+## 5. Ablation Study & Validation Strategy
 To evaluate the impact of my design decisions, I performed a systematic ablation study.
 
 ### Core Feature Ablation (Group CV)
@@ -153,64 +214,3 @@ A key part of my validation strategy was avoiding **User Leakage**. I compared s
     1.  **Data Volume Boost:** During 5-fold cross-validation, the model in each fold is trained on only 80% of the training data (approx. 8,816 files) to hold out 20% of users. The final submission model is trained on **100% of the training data** (all 11,020 files across all 100 users), which drastically increases the diversity and volume of motion styles learned by LightGBM, boosting its generalizability.
     2.  **User Cohort Overlap:** If the Kaggle test set includes new, unseen time windows recorded from the *same* 100 users present in the training set (rather than entirely unseen individuals), the test evaluation behaves closer to our local Random Stratified KFold configuration (which achieves **0.7498** F1), naturally raising the leaderboard score.
 *   **Class Weighting:** Using `'class_weight': 'balanced'` was essential. Without it, LightGBM ignores the minority activities (2 and 4) to focus on the majority classes, which causes the Macro F1 score to collapse.
-
----
-
-## 5. How to Run
-
-### Directory Structure
-Ensure your repository is organized as follows:
-```text
-/
-├── data_processing.py      (Preprocesses raw accelerometer CSVs into structured features)
-├── create_user_mapping.py  (Builds mapping of file IDs to user IDs for GroupKFold validation)
-├── train_advanced.py       (Main script to train the final LightGBM model and generate predictions)
-├── train_baseline.py       (Trains a simple Random Forest baseline on time-domain stats under random splits)
-├── baseline_simple.py      (Compares baseline classifier configurations under GroupKFold)
-├── ablation_study.py       (Runs the ablation experiments of feature groups under GroupKFold)
-├── report.md               (This report document)
-├── architecture.svg        (Visual diagram of sequence windowing and model pipeline)
-└── data/
-    ├── user_mapping_train.csv
-    ├── train/
-    │   └── train/
-    │       └── User_xxx/ (Raw CSVs)
-    └── test/
-        └── test/
-            └── User_xxx/ (Raw CSVs)
-```
-
-### Dependencies
-Install the required packages via pip:
-```bash
-pip install pandas numpy scikit-learn lightgbm tqdm joblib scipy
-```
-
-### Execution Steps
-1.  **Extract Features:** Run the feature extraction script to preprocess raw CSV logs:
-    ```bash
-    python3 data_processing.py
-    ```
-    This reads the raw files and creates `data/train_features_advanced.csv` and `data/test_features_advanced.csv`.
-2.  **Generate User Mapping:** Build the user-to-file mapping for GroupKFold validation:
-    ```bash
-    python3 create_user_mapping.py
-    ```
-    This generates `data/user_mapping_train.csv`.
-3.  **Run Baseline Evaluations (Optional):** To reproduce the baseline comparison (Table 3):
-    ```bash
-    python3 baseline_simple.py
-    ```
-    To train and evaluate the original simple Random Forest baseline (Macro F1 = 0.7002 on Stratified KFold):
-    ```bash
-    python3 train_baseline.py
-    ```
-    To reproduce the exact ablation study scores (Table 5):
-    ```bash
-    python3 ablation_study.py
-    ```
-4.  **Train Advanced Model & Predict:** Run the main advanced training script to evaluate the CV score and output predictions:
-    ```bash
-    python3 train_advanced.py
-    ```
-    This trains the final model on all data and saves the predictions to `data/submission_advanced.csv`.
